@@ -1,0 +1,45 @@
+-module(sem).
+-compile(export_all).
+
+
+
+
+start_sem(N) -> % P = # of initial permits (must be positive)
+	S = spawn(?MODULE,semaphore_loop,[N]),
+	S.
+
+semaphore_loop(0) ->
+	complete;
+
+
+semaphore_loop(P) when P>0 ->
+	complete;
+
+
+aquire(S) ->
+	complete.
+
+
+release(S) ->
+	complete.
+
+
+
+%%%%%% EXAMPLE OF HOW TWO CLIENTS USE A SEMAPHORE 
+%% CD only AFTER AB
+
+start() ->
+	S = start_sem(0),
+	spawn(?MODULE,client1,[S]),
+	spawn(?MODULE,client2,[S]).
+
+client1(S) ->
+	io:format("a~n"),
+	io:format("b~n"),
+	release(S).
+
+
+client2(S) ->
+	aquire(S),
+	io:format("c~n"),
+	io:format("d~n").
